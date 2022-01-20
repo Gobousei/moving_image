@@ -1,8 +1,10 @@
 'use strict';
  
-//Gameクラス
 class Game {
   constructor( width, height ) {
+    this.objs = [];
+ 
+    //追加
     this.frame = 0;
  
     //もしもwidthやheight何も代入されていなければ、320を代入する
@@ -11,7 +13,6 @@ class Game {
  
     this.canvas = document.getElementById( 'canvas' );
     //canvasの横幅とたて幅
- 
     canvas.width = this.width;
     canvas.height = this.height;
  
@@ -32,10 +33,14 @@ class Game {
     //ゲームに登場するものの数だけ繰り返す
     for (let i=0; i<this.objs.length; i++) {
       //ゲームに登場するもののクラスから、render()を呼び出す
-      this.objs[i].render( this.ctx );
+      this.objs[i].render( this.ctx, this.frame );
     }
  
-	  this.frame++;
+    //追加
+    this.frame++;
+    //もしコンソールで確認したいならば以下を追加
+    console.log( this.frame );
+ 
     //_main()を呼び出す（ループさせる）
     requestAnimationFrame(this._main.bind(this));
   }
@@ -48,21 +53,30 @@ class Game {
   }
 }
  
-//Labelクラス
 class Label {
   //Labelの初期設定
   constructor( label ) {
+    this._text = '';
+    this._charcnt = 0;
     this.label = label;
     this.font = "24px 'ヒラギノ角ゴ Pro', 'Hiragino Kaku Gothic Pro', 'ＭＳ ゴシック', 'MS Gothic', sans-serif";
     this.color = '#fff';
     this.baseline = 'top';
+    this.interval = 0;
   }
  
   //Labelを表示するための関数（メインループから呼び出される）
-  render( ctx ) {
+  render( ctx, frame ) {
     ctx.fillStyle = this.color;
     ctx.font = this.font;
     ctx.textBaseline = this.baseline;
-    ctx.fillText( this.label, this.x, this.y );
+    if ( this.interval === 0 ) ctx.fillText( this.label, this.x, this.y );
+    else {
+      if ( this._charcnt < this.label.length && frame%this.interval === 0 ) {
+        this._text += this.label.charAt( this._charcnt );
+        this._charcnt++;
+      }
+      ctx.fillText( this._text, this.x, this.y );
+    }
   }
 }
