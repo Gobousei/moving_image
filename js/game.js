@@ -3,7 +3,7 @@
 //Gameクラス
 class Game {
   constructor( width, height ) {
-    this.objs = [];
+    this.frame = 0;
  
     //もしもwidthやheight何も代入されていなければ、320を代入する
     this.width = width || 320;
@@ -35,6 +35,7 @@ class Game {
       this.objs[i].render( this.ctx );
     }
  
+	  this.frame++;
     //_main()を呼び出す（ループさせる）
     requestAnimationFrame(this._main.bind(this));
   }
